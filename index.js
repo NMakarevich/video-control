@@ -10,6 +10,9 @@ const volumeProgress = document.querySelector('#volume-progress')
 const videoProgressText = document.querySelector('.video-progress-text');
 let videoDuration;
 let currentTime;
+let timer;
+
+volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
 
 video.addEventListener('loadedmetadata', () => {
   videoDuration = video.duration;
@@ -20,13 +23,15 @@ video.addEventListener('loadedmetadata', () => {
 
 playButton.addEventListener('click', videoControl);
 video.addEventListener('play', () => { 
-  setInterval(updateCurrentTime, 950);
+  timer = setInterval(updateCurrentTime, 950);
 })
 
 volumeButton.addEventListener('click', volumeControl)
 
 videoProgress.addEventListener('change', () => {
   video.currentTime = videoProgress.value;
+  let progressPercent = video.currentTime / videoDuration * 100;
+  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`
 })
 
 volumeProgress.addEventListener('pointermove', () => {
@@ -36,18 +41,23 @@ volumeProgress.addEventListener('pointermove', () => {
   }
   else {
     volumeButton.style.backgroundImage = volSVG;
+    volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
   }
 })
 
 function updateCurrentTime() {
   currentTime = video.currentTime;
   videoProgress.value = currentTime;
+  let progressPercent = video.currentTime / videoDuration * 100;
+  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`
   videoProgressText.textContent = `${Math.floor(currentTime / 60)}:${Math.floor(currentTime % 60)}/${Math.floor(videoDuration / 60)}:${Math.floor(videoDuration % 60)}`;
   if (video.currentTime == video.duration) {
     playButton.classList.toggle('playing');
     playButton.style.backgroundImage = playSVG;
     videoProgress.value = 0;
     videoProgressText.textContent = `0:0/${Math.floor(videoDuration / 60)}:${Math.floor(videoDuration % 60)}`;
+    videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${0}%, #fff ${0}%, white 100%)`
+    removeInterval(timer)
   }
 }
 
