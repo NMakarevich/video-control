@@ -103,6 +103,15 @@ video {
 }
 
 .speed {
+  display: flex;
+  justify-content: center;
   height: 75%;
   background-color: white;
+  position: relative;
+}
+
+.speed-value {
+  position: absolute;
+  top: 100%;
+  padding-top: 15px;
 }

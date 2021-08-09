@@ -10,6 +10,7 @@ const volumeProgress = document.querySelector('#volume-progress')
 const videoProgressText = document.querySelector('.video-progress-text');
 const speedControl = document.querySelector('.speed-control');
 const speed = speedControl.querySelector('.speed');
+const speedValue = speed.querySelector('.speed-value')
 let videoDuration;
 let videoLengthMinutes;
 let videoLengthSeconds;
@@ -100,5 +101,6 @@ speedControl.addEventListener('pointermove', (event) => {
   const step = speedControl.offsetHeight / 9;
   let playbackRate = 0.25 * (10 - Math.round(value / step));
   speed.style.height = `${(1- playbackRate / 2.5) * 100}%`;
+  speedValue.textContent = `${playbackRate}x`
   video.playbackRate = playbackRate;
 })
