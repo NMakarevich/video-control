@@ -20,12 +20,14 @@ let timer;
 
 volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
 
-videoDuration = video.duration;
-videoLengthMinutes = Math.floor(videoDuration / 60) < 10 ? `0${Math.floor(videoDuration / 60)}` : Math.floor(videoDuration / 60);
-videoLengthSeconds = Math.floor(videoDuration % 60) < 10 ? `0${Math.floor(videoDuration % 60)}` : Math.floor(videoDuration % 60);
-videoFullLength = `${videoLengthMinutes}:${videoLengthSeconds}`
-videoProgress.setAttribute("max", videoDuration)
-videoProgressText.textContent = `00:00/${videoFullLength}`;
+video.addEventListener('loadedmetadata', () => {
+  videoDuration = video.duration;
+  videoLengthMinutes = Math.floor(videoDuration / 60) < 10 ? `0${Math.floor(videoDuration / 60)}` : Math.floor(videoDuration / 60);
+  videoLengthSeconds = Math.floor(videoDuration % 60) < 10 ? `0${Math.floor(videoDuration % 60)}` : Math.floor(videoDuration % 60);
+  videoFullLength = `${videoLengthMinutes}:${videoLengthSeconds}`
+  videoProgress.setAttribute("max", videoDuration)
+  videoProgressText.textContent = `00:00/${videoFullLength}`;  
+})
 
 playButton.addEventListener('click', videoControl);
 video.addEventListener('play', () => { 
