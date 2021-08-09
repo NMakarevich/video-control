@@ -1,16 +1,16 @@
 const video = document.querySelector('video');
 const playButton = document.querySelector('.play-button');
 const volumeButton = document.querySelector('.volume-button');
-const playSVG = 'url("assets/video/play.svg")';
-const pauseSVG = 'url("assets/video/pause.svg")';
-const volSVG = 'url("assets/video/volume.svg")';
-const muteSVG = 'url("assets/video/mute.svg")';
+const playSVG = 'url("assets/video/svg/play.svg")';
+const pauseSVG = 'url("assets/video/svg/pause.svg")';
+const volSVG = 'url("assets/video/svg/volume.svg")';
+const muteSVG = 'url("assets/video/svg/mute.svg")';
 const videoProgress = document.querySelector('#video-progress');
 const volumeProgress = document.querySelector('#volume-progress')
 const videoProgressText = document.querySelector('.video-progress-text');
 const speedControl = document.querySelector('.speed-control');
 const speed = speedControl.querySelector('.speed');
-const speedValue = speed.querySelector('.speed-value')
+const speedValue = speed.querySelector('.speed-value');
 let videoDuration;
 let videoLengthMinutes;
 let videoLengthSeconds;
@@ -20,19 +20,16 @@ let timer;
 
 volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
 
-video.addEventListener('loadedmetadata', () => {
-  videoDuration = video.duration;
-  currentTime = video.currentTime;
-  videoLengthMinutes = Math.floor(videoDuration / 60) < 10 ? `0${Math.floor(videoDuration / 60)}` : Math.floor(videoDuration / 60);
-  videoLengthSeconds = Math.floor(videoDuration % 60) < 10 ? `0${Math.floor(videoDuration % 60)}` : Math.floor(videoDuration % 60);
-  videoFullLength = `${videoLengthMinutes}:${videoLengthSeconds}`
-  videoProgress.setAttribute("max", videoDuration)
-  videoProgressText.textContent = `00:00/${videoFullLength}`;
-})
+videoDuration = video.duration;
+videoLengthMinutes = Math.floor(videoDuration / 60) < 10 ? `0${Math.floor(videoDuration / 60)}` : Math.floor(videoDuration / 60);
+videoLengthSeconds = Math.floor(videoDuration % 60) < 10 ? `0${Math.floor(videoDuration % 60)}` : Math.floor(videoDuration % 60);
+videoFullLength = `${videoLengthMinutes}:${videoLengthSeconds}`
+videoProgress.setAttribute("max", videoDuration)
+videoProgressText.textContent = `00:00/${videoFullLength}`;
 
 playButton.addEventListener('click', videoControl);
 video.addEventListener('play', () => { 
-  timer = setInterval(updateCurrentTime, 950);
+  timer = setInterval(updateCurrentTime, 1000);
 })
 
 volumeButton.addEventListener('click', volumeControl)
@@ -66,9 +63,9 @@ function updateCurrentTime() {
     playButton.classList.toggle('playing');
     playButton.style.backgroundImage = playSVG;
     videoProgress.value = 0;
-    videoProgressText.textContent = `0:0/${MvideoFullLength}`;
-    videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${0}%, #fff ${0}%, white 100%)`
-    removeInterval(timer)
+    videoProgressText.textContent = `00:00/${videoFullLength}`;
+    videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 0%, #fff 0%, white 100%)`
+    clearInterval(timer)
   }
 }
 
