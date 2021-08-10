@@ -18,6 +18,34 @@ let videoFullLength;
 let currentTime;
 let timer;
 
+const HOTKEYS = {
+  'KeyM': () => {
+    volumeControl();
+  },
+  'KeyF': () => {
+    fullScreen();
+  },
+  'KeyJ': () => {
+    video.currentTime = video.currentTime - 10;
+  },
+  'KeyL': () => {
+    video.currentTime = video.currentTime + 10;
+  },
+  'Space': () => {
+    videoControl();
+  },
+  'Comma': (evt) => {
+    if(evt.shiftKey) {
+      video.playbackRate = video.playbackRate == 0.25 ? video.playbackRate : video.playbackRate - 0.25;
+    }
+  },
+  'Period': (evt) => {
+    if(evt.shiftKey) {
+      video.playbackRate = video.playbackRate == 2.5 ? video.playbackRate : video.playbackRate + 0.25;
+    }
+  }
+}
+
 volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
 
 video.addEventListener('loadedmetadata', () => {
@@ -95,6 +123,15 @@ function volumeControl() {
   }
 }
 
+function fullScreen() {
+  if (!document.fullscreenElement) {
+    video.requestFullscreen();
+  }
+  else {
+    document.exitFullscreen();
+  }
+}
+
 speedControl.addEventListener('pointermove', (event) => {
   const value = event.pageY - speedControl.offsetTop;
   const step = speedControl.offsetHeight / 9;
@@ -102,4 +139,11 @@ speedControl.addEventListener('pointermove', (event) => {
   speed.style.height = `${(1- playbackRate / 2.5) * 100}%`;
   speedValue.textContent = `${playbackRate}x`
   video.playbackRate = playbackRate;
+})
+
+document.addEventListener('keydown', (evt) => {
+  const pressedKey = evt.code;
+  if (Object.keys(HOTKEYS).includes(pressedKey)) {
+    HOTKEYS[pressedKey](evt);
+  }
 })
