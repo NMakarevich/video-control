@@ -1,22 +1,27 @@
 const video = document.querySelector('video');
 const playButton = document.querySelector('.play-button');
 const volumeButton = document.querySelector('.volume-button');
+const videoProgress = document.querySelector('#video-progress');
+const volumeProgress = document.querySelector('#volume-progress');
+const videoProgressText = document.querySelector('.video-progress-text');
+const playbackRateElem = document.querySelector('.playback-rate');
+const rewind = document.querySelector('.rewind');
 const playSVG = 'url("assets/video/svg/play.svg")';
 const pauseSVG = 'url("assets/video/svg/pause.svg")';
 const volSVG = 'url("assets/video/svg/volume.svg")';
 const muteSVG = 'url("assets/video/svg/mute.svg")';
-const videoProgress = document.querySelector('#video-progress');
-const volumeProgress = document.querySelector('#volume-progress')
-const videoProgressText = document.querySelector('.video-progress-text');
-const speedControl = document.querySelector('.speed-control');
-const speed = speedControl.querySelector('.speed');
-const speedValue = speed.querySelector('.speed-value');
+const forwardSVG = 'url("assets/video/svg/forward-10.svg")';
+const rewindSVG = 'url("assets/video/svg/rewind-10.svg")';
+
 let videoDuration;
 let videoLengthMinutes;
 let videoLengthSeconds;
 let videoFullLength;
 let currentTime;
 let timer;
+video.volume = 0.5;
+volumeProgress.value = video.volume;
+volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
 
 const HOTKEYS = {
   'KeyM': () => {
@@ -25,11 +30,13 @@ const HOTKEYS = {
   'KeyF': () => {
     fullScreen();
   },
-  'KeyJ': () => {
+  'KeyJ': (event) => {
     video.currentTime = video.currentTime - 10;
+    showRewind(event)
   },
-  'KeyL': () => {
+  'KeyL': (event) => {
     video.currentTime = video.currentTime + 10;
+    showRewind(event)
   },
   'Space': () => {
     videoControl();
@@ -37,16 +44,24 @@ const HOTKEYS = {
   'Comma': (evt) => {
     if(evt.shiftKey) {
       video.playbackRate = video.playbackRate == 0.25 ? video.playbackRate : video.playbackRate - 0.25;
+      showPlaybackRate();
     }
   },
   'Period': (evt) => {
     if(evt.shiftKey) {
       video.playbackRate = video.playbackRate == 2.5 ? video.playbackRate : video.playbackRate + 0.25;
+      showPlaybackRate();
     }
+  },
+  'ArrowUp': () => {
+    video.volume = video.volume > 0.95 ? 1 : video.volume + 0.05;
+    updateVolume();
+  },
+  'ArrowDown': () => {
+    video.volume = video.volume < 0.05 ? 0 : video.volume - 0.05;
+    updateVolume();
   }
 }
-
-volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
 
 video.addEventListener('loadedmetadata', () => {
   videoDuration = video.duration;
@@ -62,24 +77,29 @@ video.addEventListener('play', () => {
   timer = setInterval(updateCurrentTime, 1000);
 })
 
-volumeButton.addEventListener('click', volumeControl)
-
 videoProgress.addEventListener('change', () => {
   video.currentTime = videoProgress.value;
   let progressPercent = video.currentTime / videoDuration * 100;
   videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`
 })
 
+volumeButton.addEventListener('click', volumeControl)
+
 volumeProgress.addEventListener('pointermove', () => {
   video.volume = volumeProgress.value;
+  updateVolume();
+})
+
+function updateVolume() {
+  volumeProgress.value = video.volume;
+  volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
   if (video.volume == 0) {
     volumeButton.style.backgroundImage = muteSVG;
   }
   else {
     volumeButton.style.backgroundImage = volSVG;
-    volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
   }
-})
+}
 
 function updateCurrentTime() {
   currentTime = video.currentTime;
@@ -132,18 +152,34 @@ function fullScreen() {
   }
 }
 
-speedControl.addEventListener('pointermove', (event) => {
-  const value = event.pageY - speedControl.offsetTop;
-  const step = speedControl.offsetHeight / 9;
-  let playbackRate = 0.25 * (10 - Math.round(value / step));
-  speed.style.height = `${(1- playbackRate / 2.5) * 100}%`;
-  speedValue.textContent = `${playbackRate}x`
-  video.playbackRate = playbackRate;
-})
-
 document.addEventListener('keydown', (evt) => {
   const pressedKey = evt.code;
   if (Object.keys(HOTKEYS).includes(pressedKey)) {
     HOTKEYS[pressedKey](evt);
   }
 })
+
+function showPlaybackRate() {
+  playbackRateElem.textContent = `${video.playbackRate}x`;
+  if (!playbackRateElem.classList.contains('visible')) {
+    playbackRateElem.classList.toggle('visible')
+    setTimeout(() => playbackRateElem.classList.toggle('visible'), 3000)
+  }
+}
+
+function showRewind(event) {
+  if (event.code == 'KeyL') {
+    rewind.style.backgroundImage = forwardSVG;
+    if (!rewind.classList.contains('visible')) {
+      rewind.classList.toggle('visible');
+      setTimeout(() => rewind.classList.toggle('visible'), 3000)
+    }
+  }
+  else {
+    rewind.style.backgroundImage = rewindSVG;
+    if (!rewind.classList.contains('visible')) {
+      rewind.classList.toggle('visible');
+      setTimeout(() => rewind.classList.toggle('visible'), 3000)
+    }
+  }
+}
