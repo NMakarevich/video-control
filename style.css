@@ -39,6 +39,7 @@ body {
   border-radius: 5px;
   background-color: rgba(0, 0, 0, .5);
   opacity: 0;
+  z-index: -1;
   transition: opacity .5s;
 }
 
@@ -56,10 +57,12 @@ body {
   border-radius: 50%;
   background-color: rgba(0, 0, 0, .5);
   opacity: 0;
+  z-index: -1;
   transition: opacity .5s;
 }
 
 .visible {
+  z-index: 10;
   opacity: 1;
 }
 
@@ -85,6 +88,7 @@ video {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: 50% 50%;
+  outline: none;
 }
 
 .play-button {
