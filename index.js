@@ -21,6 +21,7 @@ let currentTime;
 let timer;
 let timerInterval;
 video.volume = 0.5;
+let volumeValue;
 volumeProgress.value = video.volume;
 volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
 
@@ -138,12 +139,17 @@ function videoControl() {
 function volumeControl() {
   volumeButton.classList.toggle('active');
   if (volumeButton.classList.contains('active')) {
+    video.volume = volumeValue;
+    updateVolume();
     volumeButton.style.backgroundImage = volSVG;
-    video.muted = false;
+    // video.muted = false;
   }
   else {
+    volumeValue = video.volume;
+    video.volume = 0;
+    updateVolume();
     volumeButton.style.backgroundImage = muteSVG;
-    video.muted = true;
+    // video.muted = true;
   }
 }
 
