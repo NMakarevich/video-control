@@ -19,6 +19,7 @@ let videoLengthSeconds;
 let videoFullLength;
 let currentTime;
 let timer;
+let timerInterval;
 video.volume = 0.5;
 volumeProgress.value = video.volume;
 volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
@@ -72,9 +73,11 @@ video.addEventListener('loadedmetadata', () => {
   videoProgressText.textContent = `00:00/${videoFullLength}`;  
 })
 
+video.addEventListener('click', videoControl)
+
 playButton.addEventListener('click', videoControl);
 video.addEventListener('play', () => { 
-  timer = setInterval(updateCurrentTime, 1000);
+  timerInterval = setInterval(updateCurrentTime, 1000);
 })
 
 videoProgress.addEventListener('change', () => {
@@ -115,7 +118,7 @@ function updateCurrentTime() {
     videoProgress.value = 0;
     videoProgressText.textContent = `00:00/${videoFullLength}`;
     videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 0%, #fff 0%, white 100%)`
-    clearInterval(timer)
+    clearInterval(timerInterval)
   }
 }
 
@@ -129,6 +132,7 @@ function videoControl() {
     playButton.style.backgroundImage = playSVG;
     video.pause();
   }
+  playButton.blur();
 }
 
 function volumeControl() {
@@ -160,26 +164,27 @@ document.addEventListener('keydown', (evt) => {
 })
 
 function showPlaybackRate() {
+  if (timer) clearTimeout(timer);
   playbackRateElem.textContent = `${video.playbackRate}x`;
   if (!playbackRateElem.classList.contains('visible')) {
     playbackRateElem.classList.toggle('visible')
-    setTimeout(() => playbackRateElem.classList.toggle('visible'), 3000)
   }
+  timer = setTimeout(() => playbackRateElem.classList.toggle('visible'), 3000)
 }
 
 function showRewind(event) {
+  if (timer) clearTimeout(timer);
   if (event.code == 'KeyL') {
     rewind.style.backgroundImage = forwardSVG;
     if (!rewind.classList.contains('visible')) {
       rewind.classList.toggle('visible');
-      setTimeout(() => rewind.classList.toggle('visible'), 3000)
     }
   }
   else {
     rewind.style.backgroundImage = rewindSVG;
     if (!rewind.classList.contains('visible')) {
       rewind.classList.toggle('visible');
-      setTimeout(() => rewind.classList.toggle('visible'), 3000)
     }
   }
+  timer = setTimeout(() => rewind.classList.toggle('visible'), 3000);
 }
