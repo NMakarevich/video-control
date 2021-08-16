@@ -91,7 +91,7 @@ videoProgress.addEventListener('change', () => {
   videoDuration = video.duration;
   video.currentTime = videoProgress.value;
   let progressPercent = video.currentTime / videoDuration * 100;
-  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`
+  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`;
 })
 
 volumeButton.addEventListener('click', volumeControl)
@@ -105,9 +105,11 @@ function updateVolume() {
   volumeProgress.value = video.volume;
   volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
   if (video.volume == 0) {
+    volumeButton.classList.remove('active');
     volumeButton.style.backgroundImage = muteSVG;
   }
   else {
+    volumeButton.classList.add('active');
     volumeButton.style.backgroundImage = volSVG;
   }
 }

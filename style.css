@@ -120,6 +120,7 @@ video {
   height: 5px;
   border-radius: 5px;
   -webkit-appearance: none;
+  outline: none;
 }
 
 .progress::-webkit-slider-thumb {
