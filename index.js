@@ -97,7 +97,7 @@ videoProgress.addEventListener('change', () => {
 
 volumeButton.addEventListener('click', volumeControl)
 
-volumeProgress.addEventListener('pointermove', () => {
+volumeProgress.addEventListener('change', () => {
   video.volume = volumeProgress.value;
   updateVolume();
 })
