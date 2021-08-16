@@ -89,21 +89,24 @@ video.addEventListener('play', () => {
 })
 
 videoProgress.addEventListener('change', () => {
-  videoDuration = video.duration;
   video.currentTime = videoProgress.value;
-  let progressPercent = video.currentTime / videoDuration * 100;
-  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`;
+  updateVideoProgress();
 })
+videoProgress.addEventListener('pointermove', updateVideoProgress)
+
+function updateVideoProgress() {
+  videoDuration = video.duration;
+  let progressPercent = videoProgress.value / videoDuration * 100;
+  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`;
+}
 
 volumeButton.addEventListener('click', volumeControl)
 
-volumeProgress.addEventListener('change', () => {
-  video.volume = volumeProgress.value;
-  updateVolume();
-})
+volumeProgress.addEventListener('change', updateVolume)
+volumeProgress.addEventListener('pointermove', updateVolume)
 
 function updateVolume() {
-  volumeProgress.value = video.volume;
+  video.volume = volumeProgress.value;
   volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
   if (video.volume == 0) {
     volumeButton.classList.remove('active');
