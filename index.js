@@ -152,11 +152,13 @@ function volumeControl() {
   volumeButton.classList.toggle('active');
   if (volumeButton.classList.contains('active')) {
     video.volume = volumeValue;
+    volumeProgress.value = volumeValue;
     updateVolume();
     volumeButton.style.backgroundImage = volSVG;
   }
   else {
     volumeValue = video.volume;
+    volumeProgress.value = 0;
     video.volume = 0;
     updateVolume();
     volumeButton.style.backgroundImage = muteSVG;
