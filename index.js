@@ -13,15 +13,20 @@ const muteSVG = 'url("assets/video/svg/mute.svg")';
 const forwardSVG = 'url("assets/video/svg/forward-10.svg")';
 const rewindSVG = 'url("assets/video/svg/rewind-10.svg")';
 
-let videoDuration;
-let videoLengthMinutes;
-let videoLengthSeconds;
-let videoFullLength;
+let videoDuration = video.duration;
+let videoLengthMinutes = Math.floor(videoDuration / 60) < 10 ? `0${Math.floor(videoDuration / 60)}` : Math.floor(videoDuration / 60);
+let videoLengthSeconds = Math.floor(videoDuration % 60) < 10 ? `0${Math.floor(videoDuration % 60)}` : Math.floor(videoDuration % 60);
+let videoFullLength = `${videoLengthMinutes}:${videoLengthSeconds}`;
+videoProgress.setAttribute("max", videoDuration);
+videoProgressText.textContent = `00:00/${videoFullLength}`; 
+
 let currentTime;
-let timer;
+let timerRewind;
+let timerPlaybackRate
 let timerInterval;
-video.volume = 0.5;
 let volumeValue;
+
+video.volume = 0.5;
 volumeProgress.value = video.volume;
 volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
 
@@ -69,12 +74,13 @@ video.addEventListener('loadedmetadata', () => {
   videoDuration = video.duration;
   videoLengthMinutes = Math.floor(videoDuration / 60) < 10 ? `0${Math.floor(videoDuration / 60)}` : Math.floor(videoDuration / 60);
   videoLengthSeconds = Math.floor(videoDuration % 60) < 10 ? `0${Math.floor(videoDuration % 60)}` : Math.floor(videoDuration % 60);
-  videoFullLength = `${videoLengthMinutes}:${videoLengthSeconds}`
-  videoProgress.setAttribute("max", videoDuration)
+  videoFullLength = `${videoLengthMinutes}:${videoLengthSeconds}`;
+  videoProgress.setAttribute("max", videoDuration);
   videoProgressText.textContent = `00:00/${videoFullLength}`;  
 })
 
 video.addEventListener('click', videoControl)
+video.addEventListener('dblclick', fullScreen)
 
 playButton.addEventListener('click', videoControl);
 video.addEventListener('play', () => { 
@@ -82,9 +88,10 @@ video.addEventListener('play', () => {
 })
 
 videoProgress.addEventListener('change', () => {
+  videoDuration = video.duration;
   video.currentTime = videoProgress.value;
   let progressPercent = video.currentTime / videoDuration * 100;
-  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`
+  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`;
 })
 
 volumeButton.addEventListener('click', volumeControl)
@@ -98,9 +105,11 @@ function updateVolume() {
   volumeProgress.value = video.volume;
   volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
   if (video.volume == 0) {
+    volumeButton.classList.remove('active');
     volumeButton.style.backgroundImage = muteSVG;
   }
   else {
+    volumeButton.classList.add('active');
     volumeButton.style.backgroundImage = volSVG;
   }
 }
@@ -142,15 +151,14 @@ function volumeControl() {
     video.volume = volumeValue;
     updateVolume();
     volumeButton.style.backgroundImage = volSVG;
-    // video.muted = false;
   }
   else {
     volumeValue = video.volume;
     video.volume = 0;
     updateVolume();
     volumeButton.style.backgroundImage = muteSVG;
-    // video.muted = true;
   }
+  volumeButton.blur();
 }
 
 function fullScreen() {
@@ -170,16 +178,16 @@ document.addEventListener('keydown', (evt) => {
 })
 
 function showPlaybackRate() {
-  if (timer) clearTimeout(timer);
+  if (timerPlaybackRate) clearTimeout(timerPlaybackRate);
   playbackRateElem.textContent = `${video.playbackRate}x`;
   if (!playbackRateElem.classList.contains('visible')) {
     playbackRateElem.classList.toggle('visible')
   }
-  timer = setTimeout(() => playbackRateElem.classList.toggle('visible'), 3000)
+  timerPlaybackRate = setTimeout(() => playbackRateElem.classList.toggle('visible'), 3000)
 }
 
 function showRewind(event) {
-  if (timer) clearTimeout(timer);
+  if (timerRewind) clearTimeout(timerRewind);
   if (event.code == 'KeyL') {
     rewind.style.backgroundImage = forwardSVG;
     if (!rewind.classList.contains('visible')) {
@@ -192,5 +200,5 @@ function showRewind(event) {
       rewind.classList.toggle('visible');
     }
   }
-  timer = setTimeout(() => rewind.classList.toggle('visible'), 3000);
+  timerRewind = setTimeout(() => rewind.classList.toggle('visible'), 3000);
 }
