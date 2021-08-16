@@ -88,7 +88,6 @@ video {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: 50% 50%;
-  outline: none;
 }
 
 .play-button {
@@ -120,7 +119,6 @@ video {
   height: 5px;
   border-radius: 5px;
   -webkit-appearance: none;
-  outline: none;
 }
 
 .progress::-webkit-slider-thumb {

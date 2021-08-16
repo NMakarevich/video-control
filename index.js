@@ -46,6 +46,7 @@ const HOTKEYS = {
     showRewind(event)
   },
   'Space': () => {
+    if (document.activeElement.tagName == 'BUTTON') return
     videoControl();
   },
   'Comma': (evt) => {
@@ -142,7 +143,6 @@ function videoControl() {
     playButton.style.backgroundImage = playSVG;
     video.pause();
   }
-  playButton.blur();
 }
 
 function volumeControl() {
@@ -158,7 +158,6 @@ function volumeControl() {
     updateVolume();
     volumeButton.style.backgroundImage = muteSVG;
   }
-  volumeButton.blur();
 }
 
 function fullScreen() {
