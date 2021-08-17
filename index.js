@@ -24,7 +24,7 @@ let currentTime;
 let timerRewind;
 let timerPlaybackRate
 let timerInterval;
-let volumeValue;
+let volumeValue = 0.5;
 
 video.volume = 0.5;
 volumeProgress.value = video.volume;
