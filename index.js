@@ -84,9 +84,7 @@ video.addEventListener('click', videoControl)
 video.addEventListener('dblclick', fullScreen)
 
 playButton.addEventListener('click', videoControl);
-video.addEventListener('play', () => { 
-  timerInterval = setInterval(updateCurrentTime, 1000);
-})
+video.addEventListener('timeupdate', updateCurrentTime)
 
 videoProgress.addEventListener('change', () => {
   video.currentTime = videoProgress.value;
@@ -132,7 +130,6 @@ function updateCurrentTime() {
     videoProgress.value = 0;
     videoProgressText.textContent = `00:00/${videoFullLength}`;
     videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 0%, #fff 0%, white 100%)`
-    clearInterval(timerInterval)
   }
 }
 
