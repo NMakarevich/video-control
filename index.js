@@ -28,7 +28,12 @@ let volumeValue = 0.5;
 
 video.volume = 0.5;
 volumeProgress.value = video.volume;
-volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
+volumeProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
+
+const pause = document.createElement('img');
+pause.setAttribute('src', "assets/video/svg/pause.svg");
+const mute = document.createElement('img');
+mute.setAttribute('src', "assets/video/svg/mute.svg")
 
 const HOTKEYS = {
   'KeyM': () => {
@@ -95,7 +100,7 @@ videoProgress.addEventListener('pointermove', updateVideoProgress)
 function updateVideoProgress() {
   videoDuration = video.duration;
   let progressPercent = videoProgress.value / videoDuration * 100;
-  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`;
+  videoProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`;
 }
 
 volumeButton.addEventListener('click', volumeControl)
@@ -105,7 +110,7 @@ volumeProgress.addEventListener('pointermove', updateVolume)
 
 function updateVolume() {
   video.volume = volumeProgress.value;
-  volumeProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
+  volumeProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
   if (video.volume == 0) {
     volumeButton.classList.remove('active');
     volumeButton.style.backgroundImage = muteSVG;
@@ -122,14 +127,14 @@ function updateCurrentTime() {
   let progressPercent = video.currentTime / videoDuration * 100;
   let currentMinutes = Math.floor(currentTime / 60) < 10 ? `0${Math.floor(currentTime / 60)}` : Math.floor(currentTime / 60);
   let currentSeconds = Math.floor(currentTime % 60) < 10 ? `0${Math.floor(currentTime % 60)}` : Math.floor(currentTime % 60);
-  videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`
+  videoProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`
   videoProgressText.textContent = `${currentMinutes}:${currentSeconds}/${videoFullLength}`;
   if (video.currentTime == video.duration) {
     playButton.classList.toggle('playing');
     playButton.style.backgroundImage = playSVG;
     videoProgress.value = 0;
     videoProgressText.textContent = `00:00/${videoFullLength}`;
-    videoProgress.style.background = `linear-gradient(to right, #82CFD0 0%, #82CFD0 0%, #fff 0%, white 100%)`
+    videoProgress.style.background = '#FFFFFF';
   }
 }
 
