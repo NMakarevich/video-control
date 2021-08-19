@@ -13,27 +13,12 @@ const muteSVG = 'url("assets/video/svg/mute.svg")';
 const forwardSVG = 'url("assets/video/svg/forward-10.svg")';
 const rewindSVG = 'url("assets/video/svg/rewind-10.svg")';
 
-let videoDuration = video.duration;
-let videoLengthMinutes = Math.floor(videoDuration / 60) < 10 ? `0${Math.floor(videoDuration / 60)}` : Math.floor(videoDuration / 60);
-let videoLengthSeconds = Math.floor(videoDuration % 60) < 10 ? `0${Math.floor(videoDuration % 60)}` : Math.floor(videoDuration % 60);
-let videoFullLength = `${videoLengthMinutes}:${videoLengthSeconds}`;
-videoProgress.setAttribute("max", videoDuration);
-videoProgressText.textContent = `00:00/${videoFullLength}`; 
-
 let currentTime;
+let videoFullLength;
 let timerRewind;
 let timerPlaybackRate
 let timerInterval;
 let volumeValue = 0.5;
-
-video.volume = 0.5;
-volumeProgress.value = video.volume;
-volumeProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)`
-
-const pause = document.createElement('img');
-pause.setAttribute('src', "assets/video/svg/pause.svg");
-const mute = document.createElement('img');
-mute.setAttribute('src', "assets/video/svg/mute.svg")
 
 const HOTKEYS = {
   'KeyM': () => {
@@ -76,37 +61,72 @@ const HOTKEYS = {
   }
 }
 
-video.addEventListener('loadedmetadata', () => {
-  videoDuration = video.duration;
-  videoLengthMinutes = Math.floor(videoDuration / 60) < 10 ? `0${Math.floor(videoDuration / 60)}` : Math.floor(videoDuration / 60);
-  videoLengthSeconds = Math.floor(videoDuration % 60) < 10 ? `0${Math.floor(videoDuration % 60)}` : Math.floor(videoDuration % 60);
+function init() {
+  let videoDuration = video.duration;
+  let videoLengthMinutes = Math.floor(videoDuration / 60) < 10 ? `0${Math.floor(videoDuration / 60)}` : Math.floor(videoDuration / 60);
+  let videoLengthSeconds = Math.floor(videoDuration % 60) < 10 ? `0${Math.floor(videoDuration % 60)}` : Math.floor(videoDuration % 60);
   videoFullLength = `${videoLengthMinutes}:${videoLengthSeconds}`;
   videoProgress.setAttribute("max", videoDuration);
-  videoProgressText.textContent = `00:00/${videoFullLength}`;  
-})
+  videoProgressText.textContent = `00:00/${videoFullLength}`;
+  video.volume = volumeValue;
+  volumeProgress.value = video.volume;
+  volumeProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${volumeProgress.value * 100}%, #fff ${volumeProgress.value * 100}%, white 100%)` 
+}
 
-video.addEventListener('click', videoControl)
-video.addEventListener('dblclick', fullScreen)
+const pause = document.createElement('img');
+pause.setAttribute('src', "assets/video/svg/pause.svg");
+const mute = document.createElement('img');
+mute.setAttribute('src', "assets/video/svg/mute.svg")
+
+init();
+video.addEventListener('loadedmetadata', init)
+
+function updateVideoProgress() {
+  videoProgress.value = video.currentTime
+  videoDuration = video.duration;
+  let progressPercent = video.currentTime / videoDuration * 100;
+  videoProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`;
+}
+
+function updateCurrentTime() {
+  currentTime = video.currentTime;
+  let currentMinutes = Math.floor(currentTime / 60) < 10 ? `0${Math.floor(currentTime / 60)}` : Math.floor(currentTime / 60);
+  let currentSeconds = Math.floor(currentTime % 60) < 10 ? `0${Math.floor(currentTime % 60)}` : Math.floor(currentTime % 60);
+  videoProgressText.textContent = `${currentMinutes}:${currentSeconds}/${videoFullLength}`;
+}
+
+function videoControl() {
+  if (video.paused) {
+    playButton.style.backgroundImage = pauseSVG;
+    video.play();
+  }
+  else {
+    playButton.style.backgroundImage = playSVG;
+    video.pause();
+  }
+}
 
 playButton.addEventListener('click', videoControl);
-video.addEventListener('timeupdate', updateCurrentTime)
+video.addEventListener('click', videoControl)
+video.addEventListener('dblclick', fullScreen)
+video.addEventListener('timeupdate', () => {
+  updateCurrentTime();
+  updateVideoProgress();
+})
 
 videoProgress.addEventListener('change', () => {
   video.currentTime = videoProgress.value;
   updateVideoProgress();
 })
-videoProgress.addEventListener('pointermove', updateVideoProgress)
+videoProgress.addEventListener('pointermove', updateVideoProgress);
 
-function updateVideoProgress() {
-  videoDuration = video.duration;
-  let progressPercent = videoProgress.value / videoDuration * 100;
-  videoProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`;
-}
-
-volumeButton.addEventListener('click', volumeControl)
-
-volumeProgress.addEventListener('change', updateVolume)
-volumeProgress.addEventListener('pointermove', updateVolume)
+video.addEventListener('ended', () => {
+  playButton.classList.toggle('playing');
+  playButton.style.backgroundImage = playSVG;
+  videoProgress.value = 0;
+  videoProgressText.textContent = `00:00/${videoFullLength}`;
+  videoProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 0%, #fff 0%, white 100%)`;
+})
 
 function updateVolume() {
   video.volume = volumeProgress.value;
@@ -118,35 +138,6 @@ function updateVolume() {
   else {
     volumeButton.classList.add('active');
     volumeButton.style.backgroundImage = volSVG;
-  }
-}
-
-function updateCurrentTime() {
-  currentTime = video.currentTime;
-  videoProgress.value = currentTime;
-  let progressPercent = video.currentTime / videoDuration * 100;
-  let currentMinutes = Math.floor(currentTime / 60) < 10 ? `0${Math.floor(currentTime / 60)}` : Math.floor(currentTime / 60);
-  let currentSeconds = Math.floor(currentTime % 60) < 10 ? `0${Math.floor(currentTime % 60)}` : Math.floor(currentTime % 60);
-  videoProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`
-  videoProgressText.textContent = `${currentMinutes}:${currentSeconds}/${videoFullLength}`;
-  if (video.currentTime == video.duration) {
-    playButton.classList.toggle('playing');
-    playButton.style.backgroundImage = playSVG;
-    videoProgress.value = 0;
-    videoProgressText.textContent = `00:00/${videoFullLength}`;
-    videoProgress.style.background = '#FFFFFF';
-  }
-}
-
-function videoControl() {
-  playButton.classList.toggle('playing');
-  if (playButton.classList.contains('playing')) {
-    playButton.style.backgroundImage = pauseSVG;
-    video.play();
-  }
-  else {
-    playButton.style.backgroundImage = playSVG;
-    video.pause();
   }
 }
 
@@ -167,6 +158,10 @@ function volumeControl() {
   }
 }
 
+volumeButton.addEventListener('click', volumeControl)
+volumeProgress.addEventListener('change', updateVolume)
+volumeProgress.addEventListener('pointermove', updateVolume)
+
 function fullScreen() {
   if (!document.fullscreenElement) {
     video.requestFullscreen();
@@ -175,13 +170,6 @@ function fullScreen() {
     document.exitFullscreen();
   }
 }
-
-document.addEventListener('keydown', (evt) => {
-  const pressedKey = evt.code;
-  if (Object.keys(HOTKEYS).includes(pressedKey)) {
-    HOTKEYS[pressedKey](evt);
-  }
-})
 
 function showPlaybackRate() {
   if (timerPlaybackRate) clearTimeout(timerPlaybackRate);
@@ -208,3 +196,10 @@ function showRewind(event) {
   }
   timerRewind = setTimeout(() => rewind.classList.toggle('visible'), 3000);
 }
+
+document.addEventListener('keydown', (evt) => {
+  const pressedKey = evt.code;
+  if (Object.keys(HOTKEYS).includes(pressedKey)) {
+    HOTKEYS[pressedKey](evt);
+  }
+})
