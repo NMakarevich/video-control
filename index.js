@@ -82,9 +82,7 @@ init();
 video.addEventListener('loadedmetadata', init)
 
 function updateVideoProgress() {
-  videoProgress.value = video.currentTime
-  videoDuration = video.duration;
-  let progressPercent = video.currentTime / videoDuration * 100;
+  let progressPercent = videoProgress.value / video.duration * 100;
   videoProgress.style.background = `linear-gradient(to right, #710707 0%, #710707 ${progressPercent}%, #fff ${progressPercent}%, white 100%)`;
 }
 
@@ -110,6 +108,7 @@ playButton.addEventListener('click', videoControl);
 video.addEventListener('click', videoControl)
 video.addEventListener('dblclick', fullScreen)
 video.addEventListener('timeupdate', () => {
+  videoProgress.value = video.currentTime
   updateCurrentTime();
   updateVideoProgress();
 })
